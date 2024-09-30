@@ -1,10 +1,9 @@
 package org.translation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-import org.translation.CountryCodeConverter;
-import org.translation.LanguageCodeConverter;
 
 /**
  * Main class for this program.
@@ -49,12 +48,11 @@ public class Main {
             // TODO Task: Once you switch promptForCountry so that it returns the country
             //            name rather than the 3-letter country code, you will need to
             //            convert it back to its 3-letter country code when calling promptForLanguage
-            String CountryCode = countryCodeConverter.fromCountry(country);
-            if (CountryCode == null) {
+            String countryCode = countryCodeConverter.fromCountry(country);
+            if (countryCode == null) {
                 System.out.println("Invalid country name. Please try again.");
                 continue;
             }
-
 
             String language = promptForLanguage(translator, country);
             if (QUIT_COMMAND.equals(language)) {
@@ -69,7 +67,7 @@ public class Main {
             String languageCode = languageCodeConverter.fromLanguage(language);
             if (languageCode == null) {
                 System.out.println("Invalid language name. Please try again.");
-                continue; // Prompt again for a valid language
+                continue;
             }
 
             System.out.println(country + " in " + language + " is " + translator.translate(country, language));
@@ -85,6 +83,7 @@ public class Main {
 
     // Note: CheckStyle is configured so that we don't need javadoc for private methods
     private static String promptForCountry(Translator translator) {
+        CountryCodeConverter countryCodeConverter = new CountryCodeConverter();
         List<String> countries = translator.getCountries();
         // TODO Task: replace the following println call, sort the countries alphabetically,
         //            and print them out; one per line
@@ -92,12 +91,12 @@ public class Main {
         // TODO Task: convert the country codes to the actual country names before sorting
         List<String> countryNames = new ArrayList<>();
         for (String code : countries) {
-            String countryName = CountryCodeConverter.fromCountryCode(code);
+            String countryName = countryCodeConverter.fromCountryCode(code);
             if (countryName != null) {
                 countryNames.add(countryName);
             }
         }
-        System.out.println(countries);
+        System.out.println(countryNames);
 
         System.out.println("select a country from above:");
 
@@ -108,11 +107,29 @@ public class Main {
 
     // Note: CheckStyle is configured so that we don't need javadoc for private methods
     private static String promptForLanguage(Translator translator, String country) {
-
+        LanguageCodeConverter languageCodeConverter = new LanguageCodeConverter();
         // TODO Task: replace the line below so that we sort the languages alphabetically and print them out;
         //  one per line
         // TODO Task: convert the language codes to the actual language names before sorting
-        System.out.println(translator.getCountryLanguages(country));
+        List<String> languageCodes = translator.getCountryLanguages(country);
+
+        // Convert language codes to actual language names
+        List<String> languageNames = new ArrayList<>();
+        for (String code : languageCodes) {
+            String languageName = languageCodeConverter.fromLanguageCode(code);
+            if (languageName != null) {
+                languageNames.add(languageName);
+            }
+        }
+
+        // Sort the language names alphabetically
+        Collections.sort(languageNames);
+
+        // Print each language name on a new line
+        System.out.println("Available languages:");
+        for (String language : languageNames) {
+            System.out.println(language);
+        }
 
         System.out.println("select a language from above:");
 
