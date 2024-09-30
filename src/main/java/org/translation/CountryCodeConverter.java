@@ -12,9 +12,8 @@ import java.util.Map;
  * This class provides the service of converting country codes to their names.
  */
 public class CountryCodeConverter {
-
-     private Map<String, String> CountryToAlpha3;
-     private Map<String, String> Alpha3ToCountry;
+    private final Map<String, String> countryToAlpha3;
+    private final Map<String, String> alpha3ToCountry;
 
     /**
      * Default constructor which will load the country codes from "country-codes.txt"
@@ -30,26 +29,34 @@ public class CountryCodeConverter {
      * @throws RuntimeException if the resource file can't be loaded properly
      */
     public CountryCodeConverter(String filename) {
-        CountryToAlpha3 = new HashMap<>();
-        Alpha3ToCountry = new HashMap<>();
-
+        countryToAlpha3 = new HashMap<>();
+        alpha3ToCountry = new HashMap<>();
         try {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
                     .getClassLoader().getResource(filename).toURI()));
 
-            for (String line : lines) {
-                String[] split = line.split("\\s+");
+            for (int i = 1; i < lines.size(); i++) {
+                String line = lines.get(i);
+                String[] parts = line.split("\\s+");
 
-                if (split.length >= 4) {
-                    String countryName = split[0].trim();
-                    String alpha3Code = split[2].trim();
+                final int spaces = 4;
+                if (parts.length >= spaces) {
 
-                    Alpha3ToCountry.put(alpha3Code, countryName);
-                    CountryToAlpha3.put(countryName, alpha3Code);
+                    StringBuilder countryNameBuilder = new StringBuilder();
+                    final int stopper = 3;
+                    for (int j = 0; j < parts.length - stopper; j++) {
+                        countryNameBuilder.append(parts[j]).append(" ");
+                    }
+                    String countryName = countryNameBuilder.toString().trim();
+
+                    String alpha3Code = parts[parts.length - 2].trim().toLowerCase();
+
+                    alpha3ToCountry.put(alpha3Code, countryName);
+                    countryToAlpha3.put(countryName, alpha3Code);
                 }
             }
-
         }
+
         catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
@@ -62,7 +69,7 @@ public class CountryCodeConverter {
      * @return the name of the country corresponding to the code
      */
     public String fromCountryCode(String code) {
-        return Alpha3ToCountry.get(code);
+        return alpha3ToCountry.get(code);
     }
 
     /**
@@ -71,7 +78,7 @@ public class CountryCodeConverter {
      * @return the 3-letter code of the country
      */
     public String fromCountry(String country) {
-        return CountryToAlpha3.get(country);
+        return countryToAlpha3.get(country);
     }
 
     /**
@@ -79,6 +86,6 @@ public class CountryCodeConverter {
      * @return how many countries are included in this code converter.
      */
     public int getNumCountries() {
-        return CountryToAlpha3.size();
+        return countryToAlpha3.size();
     }
 }
