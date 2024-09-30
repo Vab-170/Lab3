@@ -113,7 +113,6 @@ public class Main {
         // TODO Task: convert the language codes to the actual language names before sorting
         List<String> languageCodes = translator.getCountryLanguages(country);
 
-        // Convert language codes to actual language names
         List<String> languageNames = new ArrayList<>();
         for (String code : languageCodes) {
             String languageName = languageCodeConverter.fromLanguageCode(code);
@@ -122,11 +121,8 @@ public class Main {
             }
         }
 
-        // Sort the language names alphabetically
         Collections.sort(languageNames);
 
-        // Print each language name on a new line
-        System.out.println("Available languages:");
         for (String language : languageNames) {
             System.out.println(language);
         }
