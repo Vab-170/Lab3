@@ -1,5 +1,6 @@
 package org.translation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,11 +24,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // TODO Task: once you finish the JSONTranslator,
-        //            you can use it here instead of the InLabByHandTranslator
-        //            to try out the whole program!
-        // Translator translator = new JSONTranslator(null);
-        Translator translator = new InLabByHandTranslator();
+        Translator translator = new JSONTranslator(null);
 
         runProgram(translator);
     }
@@ -41,8 +38,6 @@ public class Main {
     public static void runProgram(Translator translator) {
         while (true) {
             String country = promptForCountry(translator);
-            // TODO CheckStyle: The String "quit" appears 3 times in the file.
-            // TODO Checkstyle: String literal expressions should be on the left side of an equals comparison
             if (QUIT_COMMAND.equals(country)) {
                 break;
             }
@@ -50,7 +45,7 @@ public class Main {
             //            name rather than the 3-letter country code, you will need to
             //            convert it back to its 3-letter country code when calling promptForLanguage
             String language = promptForLanguage(translator, country);
-            if (language.equals(QUIT_COMMAND)) {
+            if (QUIT_COMMAND.equals(language)) {
                 break;
             }
             // TODO Task: Once you switch promptForLanguage so that it returns the language
@@ -63,7 +58,7 @@ public class Main {
             Scanner s = new Scanner(System.in);
             String textTyped = s.nextLine();
 
-            if ("quit".equals(textTyped)) {
+            if (QUIT_COMMAND.equals(textTyped)) {
                 break;
             }
         }
@@ -76,6 +71,13 @@ public class Main {
         //            and print them out; one per line
         //      hint: class Collections provides a static sort method
         // TODO Task: convert the country codes to the actual country names before sorting
+        List<String> countryNames = new ArrayList<>();
+        for (String code : countries) {
+            String countryName = CountryCodeConverter.fromCountryCode(code);
+            if (countryName != null) {
+                countryNames.add(countryName);
+            }
+        }
         System.out.println(countries);
 
         System.out.println("select a country from above:");
